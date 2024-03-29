@@ -1,9 +1,3 @@
-/**
- * 
- * Classe que cria um Cliente TCP que se comunica através de Sockets com um Servidor
- * 
- */
-
  import java.io.* ;
  import java.net.* ;
  import java.util.Scanner;

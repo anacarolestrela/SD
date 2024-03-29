@@ -3,6 +3,7 @@ import java.net.* ;
 
 public class TCPServer
 {
+    private static int clientCount = 0;
     public static void main(String args[]){
         
         try{
@@ -19,13 +20,13 @@ public class TCPServer
 // Servidor aguarda a conexão de algum Cliente.
                 Socket clientSocket = listenSocket.accept();
                 DataOutputStream out = new DataOutputStream(clientSocket.getOutputStream());
-
+                int clientId = ++clientCount;
                 // Envia a mensagem de boas-vindas para o cliente
-                out.writeUTF("Bem-vindo ao servidor!");
+                out.writeUTF("Bem-vindo ao servidor!Seu ID de cliente é: " + clientId);
 
 // Criação da Thread e conexão desta ao socket do Cliente.
-                ConnectionTCP c = new ConnectionTCP(clientSocket);
-                System.out.println("Conectou!");
+                ConnectionTCP c = new ConnectionTCP(clientSocket, clientId);
+                System.out.println("Conectou! o cliente"+clientId);
             }
         }
         catch(IOException e) {System.out.println("Listen:" + e.getMessage());}
@@ -37,14 +38,16 @@ class ConnectionTCP extends Thread
     DataInputStream in;
     DataOutputStream out;
     Socket clientSocket;
+    int clientId;
 
 // Conexão da Thread-Servidora com o socket do Cliente e
 // criação dos fluxos de I/O. (início)    
-    public ConnectionTCP (Socket aClientSocket){
+    public ConnectionTCP (Socket aClientSocket, int clientId){
         try {
             clientSocket = aClientSocket;
             in = new DataInputStream( clientSocket.getInputStream());
             out = new DataOutputStream( clientSocket.getOutputStream());
+            this.clientId = clientId;
             this.start();
         } 
         catch(IOException e)
@@ -70,7 +73,7 @@ class ConnectionTCP extends Thread
             // Envia a média de volta para o cliente
             out.writeDouble(media);
             
-            System.out.println("Média enviada: " + media);
+            System.out.println("Média enviada para o cliente "+clientId+ ":" + media);
         } 
         catch (IOException e) {
             System.out.println("IO:" + e.getMessage());
